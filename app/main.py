@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.v1.router import api_router
 from app.core.config import settings
@@ -10,6 +11,15 @@ def create_application() -> FastAPI:
         version="1.0.0",
         debug=settings.DEBUG,
         description="API REST del sistema Prime.",
+    )
+
+    # --- CONFIGURACIÓN DE CORS (AQUÍ LO AGREGAMOS) ---
+    application.add_middleware(
+        CORSMiddleware,
+        allow_origins=["http://localhost:5173"],  # Permite la conexión con tu frontend en React/Vite
+        allow_credentials=True,
+        allow_methods=["*"],                     # Permite todos los métodos (GET, POST, PUT, DELETE, etc.)
+        allow_headers=["*"],                     # Permite todas las cabeceras (Content-Type, Authorization, etc.)
     )
 
     application.include_router(health_router)
