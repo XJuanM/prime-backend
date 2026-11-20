@@ -10,7 +10,7 @@ from sqlalchemy import (
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.infrastructure.database.base import Base
-from app.models.user import utc_now_naive
+from app.models.usuarios import utc_now_naive
 
 
 class Ejercicio(Base):

@@ -1,3 +1,3 @@
-from app.models.user_role import Role
+from app.domain.enums.user_role import Roles
 
-__all__=["Role"]
+__all__=["Roles"]

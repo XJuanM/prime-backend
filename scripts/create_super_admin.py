@@ -4,7 +4,7 @@ from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 
 from app.core.security import hash_password
-from app.models.user_role import Roles               
+from app.domain.enums.user_role import Roles               
 from app.infrastructure.database.session import SessionLocal  
 from app.models.usuarios import User   
 

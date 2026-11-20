@@ -15,7 +15,7 @@ from sqlalchemy import (
 )
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from app.models.user_role import Roles
+from app.domain.enums.user_role import Roles
 from app.infrastructure.database.base import Base
 
 def utc_now_naive() -> datetime:
@@ -36,19 +36,17 @@ class User(Base):
     tipo_rol: Mapped[Roles] = mapped_column(
         SAEnum(
             Roles,
-            values_callable=lambda cls: [role.value for role in cls],
+            values_callable=lambda cls: [roles.value for roles in cls],
             native_enum=False,
             create_constraint=True,
             length=30,
             name="ck_usuarios_tipo_rol",
-        ),
-        ForeignKey("roles.tipo_rol"),
-        nullable=False,
+        )
     )
 
     nombre: Mapped[str | None] = mapped_column(String(50))
     apellido: Mapped[str | None] = mapped_column(String(50))
-    telefono: Mapped[int | None] = mapped_column(String(50))
+    telefono: Mapped[str | None] = mapped_column(String(50))
     direccion: Mapped[str | None] = mapped_column(String(50))
     correo: Mapped[str | None] = mapped_column(String(60))
 
