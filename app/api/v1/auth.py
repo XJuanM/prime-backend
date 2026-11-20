@@ -4,10 +4,10 @@ from fastapi import APIRouter, Depends, HTTPException, Request, Response, status
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app.api.dependencies import get_current_user, bearer_scheme
+from app.api.v1.dependencies import get_current_user, bearer_scheme
 from app.infrastructure.database.session import get_db
-from app.models.user import User
-from app.models.user_session import UserSession
+from app.models.usuarios import User
+from app.models.UserSession import UserSession
 from app.schemas.auth import LoginRequest, TokenResponse
 from app.schemas.user import UserResponse
 from app.services.auth_service import (
@@ -103,4 +103,4 @@ def logout(
     db.commit()
 
     return Response(status_code=status.HTTP_204_NO_CONTENT)
-```[cite: 17, 18, 19, 20]
+    
