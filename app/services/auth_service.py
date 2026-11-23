@@ -19,7 +19,7 @@ from sqlalchemy.orm import Session
 from app.core.config import settings
 from app.core.security import verify_password
 from app.models.usuarios import User
-from app.models.user_session import UserSession
+from app.models.UserSession import UserSession
 
 
 class AuthenticationError(Exception):

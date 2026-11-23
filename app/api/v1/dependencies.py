@@ -17,8 +17,8 @@ from sqlalchemy.orm import Session
 
 from app.core.config import settings
 from app.infrastructure.database.session import get_db
-from app.models.user import User
-from app.models.user_session import UserSession
+from app.models.usuarios import User
+from app.models.UserSession import UserSession
 
 bearer_scheme = HTTPBearer(auto_error=False)
 
