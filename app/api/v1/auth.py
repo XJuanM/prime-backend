@@ -6,7 +6,10 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.api.v1.dependencies import get_current_user, bearer_scheme
+<<<<<<< HEAD
 from app.core.config import settings
+=======
+>>>>>>> 226ea8362b10b9740386248720ee8582d04b50cf
 from app.infrastructure.database.session import get_db
 from app.models.usuarios import User
 from app.models.UserSession import UserSession
@@ -102,3 +105,7 @@ def logout(
     db.commit()
 
     return Response(status_code=status.HTTP_204_NO_CONTENT)
+<<<<<<< HEAD
+=======
+    
+>>>>>>> 226ea8362b10b9740386248720ee8582d04b50cf
