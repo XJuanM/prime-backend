@@ -13,13 +13,15 @@ from sqlalchemy import (
     func,
     true,
 )
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy.orm import Mapped, mapped_column, relationship, synonym
 
 from app.domain.enums.user_role import Roles
 from app.infrastructure.database.base import Base
 
+
 def utc_now_naive() -> datetime:
     return datetime.now(timezone.utc).replace(tzinfo=None)
+
 
 class User(Base):
     __tablename__ = "usuarios"
@@ -55,7 +57,7 @@ class User(Base):
     is_active: Mapped[bool] = mapped_column(
         Boolean, nullable=False, default=True, server_default=true()
     )
-    
+
     created_at: Mapped[datetime] = mapped_column(
         DateTime, nullable=False, server_default=func.current_timestamp()
     )
@@ -75,6 +77,14 @@ class User(Base):
         nullable=True,
     )
 
+    # Alias en inglés usados por servicios, schemas y routers
+    id = synonym("id_usuario")
+    role = synonym("tipo_rol")
+    email = synonym("correo")
+    first_name = synonym("nombre")
+    last_name = synonym("apellido")
+    phone = synonym("telefono")
+
     sessions = relationship(
         "UserSession",
         back_populates="user",
@@ -85,4 +95,27 @@ class User(Base):
     rutinas: Mapped[list["Rutinas"]] = relationship(
         "Rutinas",
         back_populates="usuario",
+    )
+
+    membership_assignments: Mapped[list["MembershipAssignment"]] = relationship(
+        "MembershipAssignment",
+        back_populates="user",
+        cascade="all, delete-orphan",
+        passive_deletes=True,
+    )
+
+    client_profile = relationship(
+        "ClientProfile",
+        back_populates="user",
+        uselist=False,
+        cascade="all, delete-orphan",
+        passive_deletes=True,
+    )
+
+    trainer_profile = relationship(
+        "TrainerProfile",
+        back_populates="user",
+        uselist=False,
+        cascade="all, delete-orphan",
+        passive_deletes=True,
     )

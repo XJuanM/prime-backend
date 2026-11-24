@@ -9,7 +9,7 @@ from app.domain.enums.user_role import Roles
 from app.models.usuarios import User
 from app.models.UserSession import UserSession
 from app.models.client_profile import ClientProfile
-from app.models.employee_profile import EmployeeProfile
+from app.models.trainer_profile import TrainerProfile
 from app.repositories.user_repository import UserRepository
 from app.schemas.user import UserCreate, UserUpdate
 
@@ -57,19 +57,19 @@ class UserService:
                 db.add(
                     ClientProfile(
                         user_id=user.id,
-                        **profile_data
+                        **profile_data,
                     )
                 )
 
             elif data.role in (
                 Roles.ADMINISTRADOR,
-                Roles.ENTRENADOR
+                Roles.ENTRENADOR,
             ):
-                profile_data = data.employee_profile.model_dump()
+                profile_data = data.trainer_profile.model_dump()
                 db.add(
-                    EmployeeProfile(
+                    TrainerProfile(
                         user_id=user.id,
-                        **profile_data
+                        **profile_data,
                     )
                 )
 
@@ -192,20 +192,20 @@ class UserService:
 
         try:
             if not is_active:
-
                 now = datetime.now(timezone.utc).replace(tzinfo=None)
 
                 db.execute(
                     update(UserSession)
                     .where(
-                        UserSession.user_id ==  user.id,
+                        UserSession.user_id == user.id,
                         UserSession.is_active.is_(True),
                     )
                     .values(
-                    is_active=False,
-                    revoked_at=now,
+                        is_active=False,
+                        revoked_at=now,
                     )
                 )
+
             db.commit()
             db.refresh(user)
             return user

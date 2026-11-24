@@ -59,7 +59,7 @@ def get_current_user(
     # 3. Buscar la sesión y su usuario.
     result = db.execute(
         select(UserSession, User)
-        .join(User, User.id == UserSession.user_id)
+        .join(User, User.id_usuario == UserSession.user_id)
         .where(
             UserSession.jti == jti,
             UserSession.user_id == user_id,
