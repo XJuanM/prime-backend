@@ -14,11 +14,21 @@ from app.domain.enums.user_role import Roles
 class ClientProfileCreate(BaseModel):
     birth_date: date | None = None
     address: str | None = Field(default=None, max_length=255)
+    emergency_contact_name: str | None = Field(
+        default=None, max_length=150
+    )
+    emergency_contact_phone: str | None = Field(
+        default=None, max_length=30
+    )
+    notes: str | None = None
 
 
-class EmployeeProfileCreate(BaseModel):
-    # Ajusta los campos a tu modelo real de empleado/entrenador
-    pass
+class TrainerProfileCreate(BaseModel):
+    job_title: str = Field(min_length=2, max_length=100)
+    specialty: str | None = Field(default=None, max_length=150)
+    hire_date: date | None = None
+    is_available: bool = True
+    notes: str | None = None
 
 
 class UserCreate(BaseModel):
@@ -29,7 +39,7 @@ class UserCreate(BaseModel):
     password: str = Field(min_length=8)
     role: Roles
     client_profile: ClientProfileCreate | None = None
-    employee_profile: EmployeeProfileCreate | None = None
+    trainer_profile: TrainerProfileCreate | None = None
 
     @model_validator(mode="after")
     def validate_role_profiles(self):
@@ -44,15 +54,15 @@ class UserCreate(BaseModel):
                     "El cliente debe tener un perfil de cliente"
                 )
 
-            if self.employee_profile is not None:
+            if self.trainer_profile is not None:
                 raise ValueError(
-                    "El cliente no puede tener un perfil de empleado"
+                    "El cliente no puede tener un perfil de entrenador"
                 )
 
-        elif self.role in (Roles.ADMIN, Roles.ENTRENADOR):
-            if self.employee_profile is None:
+        elif self.role in (Roles.ADMINISTRADOR, Roles.ENTRENADOR):
+            if self.trainer_profile is None:
                 raise ValueError(
-                    "El Entrenador o Administrador debe tener un perfil de empleado"
+                    "El Entrenador o Administrador debe tener un perfil de entrenador"
                 )
 
             if self.client_profile is not None:
@@ -90,9 +100,9 @@ class UserResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     id: int
-    first_name: str
-    last_name: str
-    email: EmailStr
+    first_name: str | None
+    last_name: str | None
+    email: EmailStr | None
     phone: str | None
     role: Roles
     is_active: bool

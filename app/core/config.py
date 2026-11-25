@@ -23,6 +23,13 @@ class Settings(BaseSettings):
     JWT_ALGORITHM: str="HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int=120
     SESSION_INACTIVITY_MINUTES: int=30
+
+    SMTP_HOST: str
+    SMTP_PORT: int = 587
+    SMTP_USER: str
+    SMTP_PASSWORD: str
+    SMTP_FROM: str
+
 @lru_cache
 def get_settings() -> Settings:
     return Settings()
