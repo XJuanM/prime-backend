@@ -30,6 +30,9 @@ class Settings(BaseSettings):
     SMTP_PASSWORD: str
     SMTP_FROM: str
 
+    MAX_FAILED_LOGIN_ATTEMPTS: int = 5
+    LOCKOUT_MINUTES: int = 15
+
 @lru_cache
 def get_settings() -> Settings:
     return Settings()

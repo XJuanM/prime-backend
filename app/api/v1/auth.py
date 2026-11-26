@@ -13,10 +13,10 @@ from app.models.UserSession import UserSession
 from app.schemas.auth import LoginRequest, TokenResponse
 from app.schemas.user import UserResponse
 from app.services.auth_service import (
+    AccountLockedError,
     AuthenticationError,
     authenticate_user,
 )
-
 router = APIRouter(prefix="/auth", tags=["Autenticación"])
 
 
@@ -41,12 +41,18 @@ def login(
             expires_in=expires_in,
         )
 
+    except AccountLockedError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+            detail="Demasiados intentos fallidos. Inténtalo de nuevo más tarde.",
+            headers={"Retry-After": str(exc.retry_after_seconds)},
+        )
+    
     except AuthenticationError:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Correo electrónico o contraseña incorrectos.",
         )
-
 
 @router.get("/me", response_model=UserResponse)
 def get_my_profile(
