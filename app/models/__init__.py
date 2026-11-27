@@ -11,7 +11,7 @@ from app.models.asignacion_membresias import MembershipAssignment, MembershipAss
 from app.models.password_reset_code import PasswordResetCode
 from app.models.reportes import Reporte, ReporteTipo
 
-_all_ = [
+__all__ = [
     "User",
     "UserSession",
     "Rutinas",
