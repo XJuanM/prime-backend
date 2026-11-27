@@ -25,6 +25,7 @@ router = APIRouter(
     "",
     response_model=MembershipAssignmentResponse,
     status_code=status.HTTP_201_CREATED,
+    summary="Asignar membresía a un cliente",
 )
 def assign_membership(
     data: MembershipAssignmentCreate,

@@ -20,7 +20,7 @@ router = APIRouter(
 )
 
 
-@router.get("", response_model=EjercicioListResponse)
+@router.get("", response_model=EjercicioListResponse, summary="Listar ejercicios")
 def list_ejercicios(
     search: str | None = Query(default=None, max_length=100),
     musculo_enfoque: str | None = Query(default=None, max_length=100),
@@ -44,7 +44,7 @@ def list_ejercicios(
     )
 
 
-@router.get("/{ejercicio_id}", response_model=EjercicioResponse)
+@router.get("/{ejercicio_id}", response_model=EjercicioResponse, summary="Consultar ejercicio")
 def get_ejercicio(
     ejercicio_id: int,
     db: Session = Depends(get_db),
@@ -62,6 +62,7 @@ def get_ejercicio(
     "",
     response_model=EjercicioResponse,
     status_code=status.HTTP_201_CREATED,
+    summary="Crear ejercicio",
 )
 def create_ejercicio(
     data: EjercicioCreate,
@@ -76,7 +77,7 @@ def create_ejercicio(
         )
 
 
-@router.patch("/{ejercicio_id}", response_model=EjercicioResponse)
+@router.patch("/{ejercicio_id}", response_model=EjercicioResponse, summary="Actualizar ejercicio")
 def update_ejercicio(
     ejercicio_id: int,
     data: EjercicioUpdate,
@@ -95,7 +96,7 @@ def update_ejercicio(
         )
 
 
-@router.delete("/{ejercicio_id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/{ejercicio_id}", status_code=status.HTTP_204_NO_CONTENT, summary="Eliminar ejercicio")
 def delete_ejercicio(
     ejercicio_id: int,
     db: Session = Depends(get_db),

@@ -81,7 +81,7 @@ router = APIRouter(
 )
 
 
-@router.get("", response_model=MembershipListResponse)
+@router.get("", response_model=MembershipListResponse, summary="Listar membresías")
 def list_memberships(
     search: str | None = Query(default=None, max_length=100),
     is_active: bool | None = None,
@@ -107,7 +107,7 @@ def list_memberships(
     )
 
 
-@router.get("/{membership_id}", response_model=MembershipResponse)
+@router.get("/{membership_id}", response_model=MembershipResponse, summary="Consultar membresía")
 def get_membership(
     membership_id: int,
     db: Session = Depends(get_db),
@@ -125,6 +125,7 @@ def get_membership(
     "",
     response_model=MembershipResponse,
     status_code=status.HTTP_201_CREATED,
+    summary="Crear membresía",
 )
 def create_membership(
     data: MembershipCreate,
@@ -139,7 +140,7 @@ def create_membership(
         )
 
 
-@router.patch("/{membership_id}", response_model=MembershipResponse)
+@router.patch("/{membership_id}", response_model=MembershipResponse, summary="Actualizar membresía")
 def update_membership(
     membership_id: int,
     data: MembershipUpdate,
@@ -158,7 +159,7 @@ def update_membership(
         )
 
 
-@router.delete("/{membership_id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/{membership_id}", status_code=status.HTTP_204_NO_CONTENT, summary="Eliminar membresía")
 def delete_membership(
     membership_id: int,
     db: Session = Depends(get_db),
@@ -182,6 +183,7 @@ def delete_membership(
     "/{membership_id}/asignaciones",
     response_model=AssignmentResponse,
     status_code=status.HTTP_201_CREATED,
+    summary="Asignar membresía a un cliente",
 )
 def assign_membership(
     membership_id: int,
