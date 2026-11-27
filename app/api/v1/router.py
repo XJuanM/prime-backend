@@ -2,6 +2,7 @@ from fastapi import APIRouter
 
 from app.api.v1 import (
     alimentos,
+    dietas,
     ejercicios,
     membresias,
     profile,
@@ -20,5 +21,6 @@ api_router.include_router(membresias.router)
 api_router.include_router(rutinas.router)
 api_router.include_router(ejercicios.router)
 api_router.include_router(alimentos.router)
+api_router.include_router(dietas.router)
 api_router.include_router(profile.router)
 api_router.include_router(progress.router)
