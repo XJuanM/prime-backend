@@ -177,7 +177,7 @@ class RutinaService:
                 {
                     "ejercicio_id": item.ejercicio_id,
                     "nombre_ejercicio": ejercicio.nombre,
-                    "grupo_muscular": ejercicio.grupo_muscular,
+                    "grupo_muscular": ejercicio.musculo_enfoque,  # <-- Cambia esta línea
                     "series": item.series,
                     "repeticiones": item.repeticiones,
                     "descanso_segundos": item.descanso_segundos,
