@@ -20,7 +20,7 @@ from app.services.auth_service import (
 router = APIRouter(prefix="/auth", tags=["Autenticación"])
 
 
-@router.post("/login", response_model=TokenResponse)
+@router.post("/login", response_model=TokenResponse, summary="Iniciar sesión")
 def login(
     data: LoginRequest,
     request: Request,
@@ -54,7 +54,7 @@ def login(
             detail="Correo electrónico o contraseña incorrectos.",
         )
 
-@router.get("/me", response_model=UserResponse)
+@router.get("/me", response_model=UserResponse, summary="Consultar usuario autenticado")
 def get_my_profile(
     current_user: User = Depends(get_current_user),
 ):
@@ -62,7 +62,7 @@ def get_my_profile(
     return current_user
 
 
-@router.post("/logout", status_code=status.HTTP_204_NO_CONTENT)
+@router.post("/logout", status_code=status.HTTP_204_NO_CONTENT, summary="Cerrar sesión")
 def logout(
     credentials=Depends(bearer_scheme),
     current_user: User = Depends(get_current_user),
