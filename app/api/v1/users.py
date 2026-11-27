@@ -40,7 +40,8 @@ def require_super_admin(
 @router.post(
     "",
     response_model=UserResponse,
-    status_code=status.HTTP_201_CREATED
+    status_code=status.HTTP_201_CREATED,
+    summary="Crear usuario",
 )
 def create_user(
     data: UserCreate,
@@ -59,7 +60,8 @@ def create_user(
 
 @router.get(
     "",
-    response_model=list[UserResponse]
+    response_model=list[UserResponse],
+    summary="Listar usuarios",
 )
 def list_users(
     role: Roles | None = Query(default=None),
@@ -80,7 +82,8 @@ def list_users(
 
 @router.get(
     "/{user_id}",
-    response_model=UserResponse
+    response_model=UserResponse,
+    summary="Consultar usuario",
 )
 def get_user(
     user_id: int,
@@ -99,7 +102,8 @@ def get_user(
 
 @router.patch(
     "/{user_id}",
-    response_model=UserResponse
+    response_model=UserResponse,
+    summary="Actualizar usuario",
 )
 def update_user(
     user_id: int,
@@ -131,7 +135,8 @@ def update_user(
 
 @router.patch(
     "/{user_id}/status",
-    response_model=UserResponse
+    response_model=UserResponse,
+    summary="Cambiar estado del usuario",
 )
 def change_user_status(
     user_id: int,

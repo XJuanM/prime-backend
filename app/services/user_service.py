@@ -26,8 +26,54 @@ class UserAlreadyExistsError(UserServiceError):
     pass
 
 
+class UserPermissionError(UserServiceError):
+    pass
+
+
+class UserHasRelatedDataError(UserServiceError):
+    pass
+
+
 class UserService:
 
+    # ------------------------------------------------------------------
+    # Reglas de permisos
+    # (SUPUESTOS: ajústalas si tus reglas de negocio son otras)
+    # ------------------------------------------------------------------
+    @staticmethod
+    def ensure_can_create(current_user: User, target_role: Roles) -> None:
+        """Quién puede crear qué rol."""
+        if target_role == Roles.SUPER_ADMIN:
+            raise UserPermissionError(
+                "No se puede crear otro SUPER_ADMIN."
+            )
+
+        if current_user.role == Roles.SUPER_ADMIN:
+            return
+
+        if current_user.role == Roles.ENTRENADOR:
+            if target_role != Roles.CLIENTE:
+                raise UserPermissionError(
+                    "El entrenador solo puede crear clientes."
+                )
+            return
+
+        raise UserPermissionError("No tienes permisos para crear usuarios.")
+
+    @staticmethod
+    def _can_view(current_user: User, target: User) -> bool:
+        """Super admin y administrador ven a todos; el entrenador solo clientes."""
+        if current_user.role in (Roles.SUPER_ADMIN, Roles.ADMINISTRADOR):
+            return True
+
+        if current_user.role == Roles.ENTRENADOR:
+            return target.role == Roles.CLIENTE
+
+        return False
+
+    # ------------------------------------------------------------------
+    # Crear
+    # ------------------------------------------------------------------
     @staticmethod
     def create_user(db: Session, data: UserCreate) -> User:
 
@@ -89,6 +135,9 @@ class UserService:
             db.rollback()
             raise
 
+    # ------------------------------------------------------------------
+    # Consultar
+    # ------------------------------------------------------------------
     @staticmethod
     def get_user(db: Session, user_id: int) -> User:
 
@@ -102,13 +151,35 @@ class UserService:
         return user
 
     @staticmethod
+    def get_visible_user(
+        db: Session, user_id: int, current_user: User
+    ) -> User:
+        user = UserService.get_user(db, user_id)
+
+        # Si no puede verlo, se responde como "no encontrado"
+        # para no revelar que el usuario existe.
+        if not UserService._can_view(current_user, user):
+            raise UserNotFoundError(
+                "No se encontró el usuario solicitado."
+            )
+
+        return user
+
+    @staticmethod
     def list_users(
         db: Session,
         role: Roles | None = None,
         is_active: bool | None = None,
         skip: int = 0,
         limit: int = 50,
+        current_user: User | None = None,
     ) -> list[User]:
+
+        # El entrenador solo ve clientes.
+        if current_user is not None and current_user.role == Roles.ENTRENADOR:
+            if role is not None and role != Roles.CLIENTE:
+                return []
+            role = Roles.CLIENTE
 
         return UserRepository.list_users(
             db=db,
@@ -118,6 +189,9 @@ class UserService:
             limit=limit,
         )
 
+    # ------------------------------------------------------------------
+    # Actualizar
+    # ------------------------------------------------------------------
     @staticmethod
     def update_user(
         db: Session,
@@ -209,6 +283,48 @@ class UserService:
             db.commit()
             db.refresh(user)
             return user
+
+        except Exception:
+            db.rollback()
+            raise
+
+    # ------------------------------------------------------------------
+    # Eliminar
+    # ------------------------------------------------------------------
+    @staticmethod
+    def delete_user(
+        db: Session,
+        user_id: int,
+        current_user: User,
+    ) -> None:
+
+        user = UserService.get_user(db, user_id)
+
+        if user.id == current_user.id:
+            raise UserServiceError("No puedes eliminar tu propia cuenta.")
+
+        if user.role == Roles.SUPER_ADMIN:
+            raise UserPermissionError("No se puede eliminar el SUPER_ADMIN.")
+
+        # Un administrador no puede eliminar a otro administrador.
+        if (
+            current_user.role == Roles.ADMINISTRADOR
+            and user.role == Roles.ADMINISTRADOR
+        ):
+            raise UserPermissionError(
+                "Un administrador no puede eliminar a otro administrador."
+            )
+
+        try:
+            db.delete(user)
+            db.commit()
+
+        except IntegrityError as exc:
+            db.rollback()
+            raise UserHasRelatedDataError(
+                "No se puede eliminar el usuario porque tiene información "
+                "asociada (rutinas, membresías, etc.). Desactívalo en su lugar."
+            ) from exc
 
         except Exception:
             db.rollback()

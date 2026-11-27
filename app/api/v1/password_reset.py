@@ -20,7 +20,7 @@ router = APIRouter(
 )
 
 
-@router.post("/forgot-password", response_model=MessageResponse)
+@router.post("/forgot-password", response_model=MessageResponse, summary="Solicitar código de recuperación")
 def forgot_password(
     data: ForgotPasswordRequest,
     background_tasks: BackgroundTasks,
@@ -41,7 +41,7 @@ def forgot_password(
     )
 
 
-@router.post("/reset-password", response_model=MessageResponse)
+@router.post("/reset-password", response_model=MessageResponse, summary="Restablecer contraseña")
 def reset_password(
     data: ResetPasswordRequest,
     db: Session = Depends(get_db),

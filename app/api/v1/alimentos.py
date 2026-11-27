@@ -20,7 +20,7 @@ router = APIRouter(
 )
 
 
-@router.get("", response_model=AlimentoListResponse)
+@router.get("", response_model=AlimentoListResponse, summary="Listar alimentos")
 def list_alimentos(
     search: str | None = Query(default=None, max_length=100),
     page: int = Query(default=1, ge=1),
@@ -42,7 +42,7 @@ def list_alimentos(
     )
 
 
-@router.get("/{alimento_id}", response_model=AlimentoResponse)
+@router.get("/{alimento_id}", response_model=AlimentoResponse, summary="Consultar alimento")
 def get_alimento(
     alimento_id: int,
     db: Session = Depends(get_db),
@@ -60,6 +60,7 @@ def get_alimento(
     "",
     response_model=AlimentoResponse,
     status_code=status.HTTP_201_CREATED,
+    summary="Crear alimento",
 )
 def create_alimento(
     data: AlimentoCreate,
@@ -74,7 +75,7 @@ def create_alimento(
         )
 
 
-@router.patch("/{alimento_id}", response_model=AlimentoResponse)
+@router.patch("/{alimento_id}", response_model=AlimentoResponse, summary="Actualizar alimento")
 def update_alimento(
     alimento_id: int,
     data: AlimentoUpdate,
@@ -93,7 +94,7 @@ def update_alimento(
         )
 
 
-@router.delete("/{alimento_id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/{alimento_id}", status_code=status.HTTP_204_NO_CONTENT, summary="Eliminar alimento")
 def delete_alimento(
     alimento_id: int,
     db: Session = Depends(get_db),
